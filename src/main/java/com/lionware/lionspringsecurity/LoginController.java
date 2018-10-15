@@ -1,32 +1,51 @@
 package com.lionware.lionspringsecurity;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lionware.lionspringsecurity.core.LionSecurityConst;
+import com.lionware.lionspringsecurity.properties.LionSecurityProperties;
 
 @CrossOrigin
 @RestController
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
-@RequestMapping(value=LionSecurityConst.LOGIN_BASE_URL)
 public class LoginController {
-	@RequestMapping(value=LionSecurityConst.LOGIN_USER_URL, method=RequestMethod.GET)
+	
+	@Autowired
+	private LionSecurityProperties securityProperties;
+	
+	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".login-path}")
 	public Principal user(Principal user) {
 		return user;
 	}
 	
-	@RequestMapping(value=LionSecurityConst.LOGIN_TOKEN_URL, method=RequestMethod.GET)
-	@ResponseBody
-	public Map<String,String> token(HttpSession session) {
-		return Collections.singletonMap(LionSecurityConst.TOKEN_KEY, session.getId());
+	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".token-path}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<String> token(HttpSession session) {
+		String token = "{\"token\": \"" + session.getId() + "\"}";
+		
+		if (securityProperties.getEnabled()) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			
+			if (authentication != null && authentication.isAuthenticated()) {
+				return new ResponseEntity<>(token, HttpStatus.OK);			
+			}
+			
+			return new ResponseEntity<String>("Unauthorized access!", HttpStatus.UNAUTHORIZED);
+		}
+		
+		return new ResponseEntity<String>(token, HttpStatus.OK);
 	}
 }

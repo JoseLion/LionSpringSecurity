@@ -1,4 +1,4 @@
-package com.lionware.lionspringsecurity;
+package com.lionware.lionspringsecurity.core;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -1,5 +1,6 @@
 package com.lionware.lionspringsecurity;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,66 +11,51 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.lionware.lionspringsecurity.core.Account;
+import com.lionware.lionspringsecurity.core.AccountService;
+import com.lionware.lionspringsecurity.core.LionSecurityException;
+import com.lionware.lionspringsecurity.properties.LionSecurityProperties;
+
 @Service
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 public class AuthenticationService implements UserDetailsService {
-	@Autowired
-	private LionSecurityFactory lionSecurityFactory;
 	
-	private String extra;
+	@Autowired
+	private LionSecurityProperties securityProperties;
+	
+	@Autowired
+	private AccountService accountService;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		if (username == null) {
-			throw new UsernameNotFoundException(LionSecurityConst.USER_NOT_FOUND);
-		}
-		
-		Boolean isLocked = false;
-		
-		if (lionSecurityFactory.getConfig().getLastFailedAttempt(username, this.getExtra()) != null) {
-			if (lionSecurityFactory.getConfig().getResetTimeHours() != null) {
-				Date today = new Date();
-				Double timeToReset = lionSecurityFactory.getConfig().getResetTimeHours() * 60.0 * 60.0 * 1000.0;
-				
-				if ((lionSecurityFactory.getConfig().getLastFailedAttempt(username, this.getExtra()).getTime() + timeToReset) < today.getTime()) {
-					lionSecurityFactory.getConfig().setLastFailedAttempt(username, null, this.getExtra());
-					lionSecurityFactory.getConfig().setNumberOfAttempts(username, 0, this.getExtra());
-				}
+		try {
+			if (username == null) {
+				throw new UsernameNotFoundException("Username was not provided to the authentication service");
 			}
-		}
-		
-		if (lionSecurityFactory.getConfig().getLockDate(username, this.getExtra()) != null) {
-			isLocked = true;
 			
-			if (lionSecurityFactory.getConfig().getLockTimeMinutes() != null) {
-				Date today = new Date();
-				Double timeToUnlock = lionSecurityFactory.getConfig().getLockTimeMinutes() * 60.0 * 1000.0;
-				
-				if (isLocked) {
-					if ((lionSecurityFactory.getConfig().getLockDate(username, this.getExtra()).getTime() + timeToUnlock) < today.getTime()) {
-						isLocked = false;
-						unlockUser(username);
-					}
-				}
-			} else {
-				isLocked = false;
-				unlockUser(username);
+			Account account = accountService.populate(username);
+			
+			if (account == null) {
+				throw new UsernameNotFoundException("The username could not be found");
 			}
+			
+			Date today = new Date();
+			
+			if (account.getIsLocked() && (account.getLockDate().getTime() + securityProperties.getLockTime()) > today.getTime()) {
+				this.unlock(account);
+			}
+			
+			return new AuthenticatedAccount(account);
+		} catch (LionSecurityException | SQLException e) {
+			throw new UsernameNotFoundException("Security Exception: " + e.getMessage(), e);
 		}
-		
-		return new AuthenticatedUser(lionSecurityFactory.getConfig().getUserId(username, this.getExtra()), username, lionSecurityFactory.getConfig().getPassword(username, this.getExtra()), lionSecurityFactory.getConfig().getRoles(username, this.getExtra()), lionSecurityFactory.getConfig().getIsLoked(username, this.getExtra()));
 	}
 	
-	private void unlockUser(String username) {
-		lionSecurityFactory.getConfig().setLockDate(username, null, this.getExtra());
-		lionSecurityFactory.getConfig().setNumberOfAttempts(username, 0, this.getExtra());
+	private void unlock(Account account) throws LionSecurityException, SQLException {
+		account.setLockDate(null);
+		account.setIsLocked(false);
+		account.setAttempts(0);
+		accountService.update(account);
 	}
-
-	public String getExtra() {
-		return extra;
-	}
-
-	public void setExtra(String extra) {
-		this.extra = extra;
-	}
+	
 }
