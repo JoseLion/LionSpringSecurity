@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.4.RELEASE'
+		springBootVersion = '2.0.6.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -11,27 +11,96 @@ buildscript {
 }
 
 apply plugin: 'java-library'
-apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
-group = 'com.github.JoseLion'
-version = '0.0.1-SNAPSHOT'
+group = 'com.github.joselion'
+archivesBaseName = 'lion-spring-security'
+version = '1.0.0'
 sourceCompatibility = 1.8
+
+task clientJar(type: Jar) {
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives clientJar, javadocJar, sourcesJar
+}
+
+signing {
+	sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+			
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+			
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+			
+			pom.project {
+				name = "Lion Spring Security"
+				packaging 'jar'
+				description = "Library wapper to simply implement Spring Security to Spring Boot projects with additional features like locking and and expiration, by simpli adding the database account information to the application propertiies file"
+				url = "https://github.com/JoseLion/LionSpringSecurity"
+				
+				licenses {
+					license {
+						name = "MIT License"
+						url = "http://www.opensource.org/licenses/mit-license.php"
+					}
+				}
+				
+				developers {
+					developer {
+						id = "JoseLion"
+						name = "Jose Luis Leon"
+						email = "joseluis5000l@gmail.com"
+						organization = "com.github.joselion"
+						organizationUrl = "https://github.com/JoseLion"
+					}
+				}
+				
+				scm {
+					connection = "scm:git:git@github.com/JoseLion/LionSpringSecurity.git"
+					developerConnection = "scm:git:ssh://github.com:JoseLion/LionSpringSecurity.git"
+					url = "https://github.com/JoseLion/LionSpringSecuritys"
+				}
+			}
+		}
+	}
+}
 
 repositories {
 	mavenCentral()
 }
 
-jar {
-	enabled=true
-}
-
 dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('javax.servlet:javax.servlet-api')
+	compile('org.springframework:spring-jdbc:5.1.0.RELEASE')
 	compile('commons-io:commons-io:2.6')
+	compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
+	testCompile('org.postgresql:postgresql')
 }
