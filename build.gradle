@@ -19,11 +19,11 @@ apply plugin: 'signing'
 
 group = 'com.github.joselion'
 archivesBaseName = 'lion-spring-security'
-version = '1.0.0'
+version = '1.0.2'
 sourceCompatibility = 1.8
 
-task clientJar(type: Jar) {
-	from sourceSets.main.allSource
+jar {
+	enabled = true
 }
 
 task javadocJar(type: Jar) {
@@ -37,7 +37,7 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-	archives clientJar, javadocJar, sourcesJar
+	archives jar, javadocJar, sourcesJar
 }
 
 signing {

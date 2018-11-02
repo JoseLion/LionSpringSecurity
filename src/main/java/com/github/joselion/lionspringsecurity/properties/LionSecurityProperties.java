@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 /**
  * Lion Spring Security configuration properties
- * <p>
- * @author JoseLuis
+ * @author JoseLion
  *
  */
 @ConfigurationProperties(prefix=LionSecurityConst.PROPS_PREFIX)
@@ -18,108 +17,91 @@ public class LionSecurityProperties {
 	
 	/**
 	 * Enables or disables spring security
-	 * <p>
-	 * @default value is {@value #enabled}
 	 * 
 	 */
 	private Boolean enabled = true;
 	
 	/**
 	 * List of allowed origins which can access the end-points
-	 * <p>
-	 * Setting this enables CORS feature to the security
+	 * 
+	 * Setting this property enables CORS feature to the security, removing it disabled CORS so all origins are allowed
 	 * 
 	 */
 	private List<String> allowedOrigins;
 	
 	/**
 	 * List of path matches that will ignore authorization
-	 * <p>
-	 * @default value is {@value #openPaths}
 	 * 
 	 */
 	private List<String> openPaths = Arrays.asList("/open/**");
 	
 	/**
 	 * The name of the cookie to store the CSRF token
-	 * <p>
-	 * @default value is {@value #csrfCookie}
+	 * 
 	 */
 	private String csrfCookie = "CSRF-TOKEN";
 	
 	/**
 	 * The value to be used on the bearer of the Authorization header
-	 * <p>
-	 * @default value is {@value #bearer}
+	 * 
 	 */
 	private String bearer = "Bearer";
 	
 	/**
-	 * If true, account locking is enabled
-	 * <p>
-	 * @default value is {@value #enableLock}
+	 * Enables or disables account locking feature
 	 * 
 	 */
 	private Boolean enableLock = true;
 	
 	/**
-	 * The time in milliseconds for which a user is locked
-	 * <p>
-	 * @default value is {@value #lockTime}
+	 * The time in milliseconds for which a user is locked (enableLock must be true)
 	 * 
 	 */
-	private Long lockTime = 30L * 60L * 1000L;
+	private Long lockTime = new Long(1800000);
 	
 	/**
 	 * The maximum number of attempts for the account to be locked
-	 * <p>
-	 * @default value is {@value #maxAttempts}
 	 * 
 	 */
 	private Integer maxAttempts = 5;
 	
 	/**
-	 * The login method to be used
-	 * <p>
-	 * @default value is {@value #loginMethod}
+	 * Default: get
+	 * 
+	 * The method for the login end-point
 	 * 
 	 */
 	private RequestMethod loginMethod = RequestMethod.GET;
 	
 	/**
-	 * The path to the login end-point
-	 * <p>
-	 * @default value is {@value #loginPath}
+	 * The path for the login end-point
 	 * 
 	 */
 	private String loginPath = "/login";
 	
 	/**
-	 * The logout method to be used
-	 * <p>
-	 * @default value is {@value #logoutMethod}
+	 * Default: post
+	 * 
+	 * The method for the logout end-point
 	 * 
 	 */
 	private RequestMethod logoutMethod = RequestMethod.POST;
 	
 	/**
 	 * The path to the logout end-point
-	 * <p>
-	 * @default value is {@value #logoutPath}
 	 * 
 	 */
 	private String logoutPath = "/logout";
 	
 	/**
-	 * The path to the token end-point
-	 * <p>
-	 * @default value is {@value #tokenPath}
+	 * The path to the session token end-point
 	 * 
 	 */
 	private String tokenPath = "/token";
 	
 	/**
 	 * Properties for all access control headers
+	 * 
 	 */
 	private AccessControlProperties accessControl = new AccessControlProperties();
 	

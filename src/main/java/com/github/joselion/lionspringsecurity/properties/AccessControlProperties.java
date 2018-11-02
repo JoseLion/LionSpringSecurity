@@ -4,25 +4,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 
+@ConfigurationProperties(prefix=LionSecurityConst.PROPS_PREFIX + ".access-control")
 public class AccessControlProperties {
 	
 	/**
-	 * Value for {@value #HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS} HTTP header
-	 * <p>
-	 * @default value is {@value #allowCredentials}
+	 * Value for ACCESS_CONTROL_ALLOW_CREDENTIALS HTTP header
 	 * 
 	 */
 	private Boolean allowCredentials = true;
 	
 	/**
-	 * Value for {@value #HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS} HTTP header
-	 * <p>
-	 * @default value is {@value #allowHeadersToString()}
+	 * Value for ACCESS_CONTROL_ALLOW_HEADERS HTTP header
 	 * 
 	 */
 	private List<String> allowHeaders = Arrays.asList(
@@ -36,9 +34,7 @@ public class AccessControlProperties {
 	);
 	
 	/**
-	 * Value for {@value #HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS} HTTP header
-	 * <p>
-	 * @default value is {@value #allowMethodsToString()}
+	 * Value for ACCESS_CONTROL_ALLOW_METHODS HTTP header
 	 * 
 	 */
 	private List<HttpMethod> allowMethods = Arrays.asList(
@@ -50,9 +46,7 @@ public class AccessControlProperties {
 	);
 	
 	/**
-	 * Value for {@value #HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS} HTTP header
-	 * <p>
-	 * @default value is {@value #exposeHeadersToString()}
+	 * Value for ACCESS_CONTROL_EXPOSE_HEADERS HTTP header
 	 * 
 	 */
 	private List<String> exposeHeaders = Arrays.asList(
@@ -62,9 +56,7 @@ public class AccessControlProperties {
 	);
 	
 	/**
-	 * Value for {@value #HttpHeaders.ACCESS_CONTROL_MAX_AGE} HTTP header
-	 * <p>
-	 * @default value is {@value #maxAge}
+	 * Value for ACCESS_CONTROL_MAX_AGE HTTP header
 	 * 
 	 */
 	private Integer maxAge = 3600;
