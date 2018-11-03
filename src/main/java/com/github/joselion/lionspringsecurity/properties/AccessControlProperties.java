@@ -14,13 +14,13 @@ import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 public class AccessControlProperties {
 	
 	/**
-	 * Value for ACCESS_CONTROL_ALLOW_CREDENTIALS HTTP header
+	 * Value for "Access-Control-Allow-Credentials" header
 	 * 
 	 */
 	private Boolean allowCredentials = true;
 	
 	/**
-	 * Value for ACCESS_CONTROL_ALLOW_HEADERS HTTP header
+	 * Value for "Access-Control-Allow-Headers" header
 	 * 
 	 */
 	private List<String> allowHeaders = Arrays.asList(
@@ -29,24 +29,24 @@ public class AccessControlProperties {
 		HttpHeaders.CONTENT_ENCODING,
 		HttpHeaders.CONTENT_TYPE,
 		HttpHeaders.ORIGIN,
-		"X-Requested-With",
-		LionSecurityConst.CSRF_HEADER_NAME
+		LionSecurityConst.CSRF_HEADER_NAME,
+		"X-Requested-With"
 	);
 	
 	/**
-	 * Value for ACCESS_CONTROL_ALLOW_METHODS HTTP header
+	 * Value for "Access-Control-Allow-Methods" header
 	 * 
 	 */
 	private List<HttpMethod> allowMethods = Arrays.asList(
-		HttpMethod.OPTIONS,
+		HttpMethod.DELETE,
 		HttpMethod.GET,
+		HttpMethod.OPTIONS,
 		HttpMethod.POST,
-		HttpMethod.PUT,
-		HttpMethod.DELETE
+		HttpMethod.PUT
 	);
 	
 	/**
-	 * Value for ACCESS_CONTROL_EXPOSE_HEADERS HTTP header
+	 * Value for "Access-Control-Expose-Headers" header
 	 * 
 	 */
 	private List<String> exposeHeaders = Arrays.asList(
@@ -56,7 +56,7 @@ public class AccessControlProperties {
 	);
 	
 	/**
-	 * Value for ACCESS_CONTROL_MAX_AGE HTTP header
+	 * Value for "Access-Control-Max-Age" header
 	 * 
 	 */
 	private Integer maxAge = 3600;

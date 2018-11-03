@@ -8,76 +8,123 @@ import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 public class AccountEntityProperties {
 	
 	/**
-	 * The name of the accounts table on your database
-	 * 
-	 */
-	private String tableName = "account";
-	
-	/**
-	 * The name of the ID column on the {@value #tableName} table
-	 * 
-	 */
-	private String id = "id";
-	
-	/**
-	 * The name of the username column on the {@value #tableName} table
-	 * 
-	 */
-	private String username = "username";
-	
-	/**
-	 * The name of the password column on the {@value #tableName} table
-	 * 
-	 */
-	private String password = "password";
-	
-	/**
-	 * The name of the roles column on the {@value #tableName} table
-	 * 
-	 */
-	private String roles = "roles";
-	
-	/**
-	 * The name of the isEnabled column on the {@value #tableName} table
-	 * 
-	 */
-	private String isEnabled = "is_enabled";
-	
-	/**
-	 * The name of the isLocked column on the {@value #tableName} table
-	 * 
-	 */
-	private String isLocked = "is_locked";
-	
-	/**
-	 * The name of the lockDate column on the {@value #tableName} table
-	 * 
-	 */
-	private String lockDate = "lock_date";
-	
-	/**
-	 * The name of the lastAttempt column on the {@value #tableName} table
-	 * 
-	 */
-	private String lastAttempt = "last_attempt";
-	
-	/**
-	 * The name of the attempts column on the {@value #tableName} table
-	 * 
-	 */
-	private String attempts = "attempts";
-	
-	/**
-	 * The name of the accountExpired column on the {@value #tableName} table
+	 * (Optional) The name of the accountExpired column on the account entity table.
+	 * This column will be used to determine if the account has expired.
+	 * It's expected to be of type "boolean"
 	 * 
 	 */
 	private String accountExpired = "account_expired";
 	
 	/**
-	 * The name of the credentialsExpired column on the {@value #tableName} table
+	 * (Optional)The name of the attempts column on the account entity table.
+	 * This column will be used to determine the number of attempts on authenticate that each account has.
+	 * It's expected to be of type "number"
+	 * 
+	 */
+	private String attempts = "attempts";
+	
+	/**
+	 * (Optional) The name of the credentialsExpired column on the account entity table.
+	 * This column will be used to determine if the accounts credentials has expired.
+	 * It's expected to be of type "boolean"
 	 * 
 	 */
 	private String credentialsExpired = "credentials_expired";
+	
+	/**
+	 * (Required) The name of the id column on the account entity table.
+	 * This column will be used as the primary key column.
+	 * Used as surrogate PK so it's expected to be of type "boolean".
+	 * It should have "unique" and "not null" constraints
+	 * 
+	 */
+	private String id = "id";
+	
+	/**
+	 * (Optional) The name of the isEnabled column on the account entity table.
+	 * This column will be used to determine if the account is enabled.
+	 * It's expected to be of type "boolean"
+	 * 
+	 */
+	private String isEnabled = "is_enabled";
+	
+	/**
+	 * (Optional) The name of the isLocked column on the account entity table.
+	 * This column will be used to determine if the account has been temporary locked by reaching the number of failed authentication attempts.
+	 * It's expected to be of type "boolean"
+	 * 
+	 */
+	private String isLocked = "is_locked";
+	
+	/**
+	 * (Optional) The name of the lastAttempt column on the account entity table.
+	 * This column will be used to determine the date and time of the latest authentication attempt.
+	 * It's expected to be of type "timestamp"
+	 * 
+	 */
+	private String lastAttempt = "last_attempt";
+	
+	/**
+	 * (Optional) The name of the lockDate column on the account entity table.
+	 * This column will be used to determine the date and time of when an account was locked.
+	 * It's expected to be of type "timestamp"
+	 * 
+	 */
+	private String lockDate = "lock_date";
+	
+	/**
+	 * (Required) The name of the password column on the account entity table.
+	 * This column will be used to store the encrypted account password credential.
+	 * It's expected to be of type "text"
+	 * 
+	 */
+	private String password = "password";
+	
+	/**
+	 * (Optional) The name of the roles column on the account entity table.
+	 * This column will be used to store the account roles.
+	 * It's expected to be of type "text[]"
+	 * 
+	 */
+	private String roles = "roles";
+	
+	/**
+	 * (Required) The name of the account entity table on your database
+	 * 
+	 */
+	private String tableName = "account";
+	
+	/**
+	 * (Required) The name of the username column on the account entity table.
+	 * This column will be used to store the account username credential.
+	 * It's expected to be of type "text"
+	 * 
+	 */
+	private String username = "username";
+
+	public String getAccountExpired() {
+		return accountExpired;
+	}
+
+	public void setAccountExpired(String accountExpired) {
+		this.accountExpired = accountExpired;
+	}
+
+	public String getAttempts() {
+		return attempts;
+	}
+
+	public void setAttempts(String attempts) {
+		this.attempts = attempts;
+	}
+
+	public String getCredentialsExpired() {
+		return credentialsExpired;
+	}
+
+	public void setCredentialsExpired(String credentialsExpired) {
+		this.credentialsExpired = credentialsExpired;
+	}
 
 	public String getId() {
 		return id;
@@ -85,38 +132,6 @@ public class AccountEntityProperties {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRoles() {
-		return roles;
-	}
-
-	public void setRoles(String roles) {
-		this.roles = roles;
 	}
 
 	public String getIsEnabled() {
@@ -135,14 +150,6 @@ public class AccountEntityProperties {
 		this.isLocked = isLocked;
 	}
 
-	public String getLockDate() {
-		return lockDate;
-	}
-
-	public void setLockDate(String lockDate) {
-		this.lockDate = lockDate;
-	}
-
 	public String getLastAttempt() {
 		return lastAttempt;
 	}
@@ -151,28 +158,44 @@ public class AccountEntityProperties {
 		this.lastAttempt = lastAttempt;
 	}
 
-	public String getAttempts() {
-		return attempts;
+	public String getLockDate() {
+		return lockDate;
 	}
 
-	public void setAttempts(String attempts) {
-		this.attempts = attempts;
+	public void setLockDate(String lockDate) {
+		this.lockDate = lockDate;
 	}
 
-	public String getAccountExpired() {
-		return accountExpired;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setAccountExpired(String accountExpired) {
-		this.accountExpired = accountExpired;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getCredentialsExpired() {
-		return credentialsExpired;
+	public String getRoles() {
+		return roles;
 	}
 
-	public void setCredentialsExpired(String credentialsExpired) {
-		this.credentialsExpired = credentialsExpired;
+	public void setRoles(String roles) {
+		this.roles = roles;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 }

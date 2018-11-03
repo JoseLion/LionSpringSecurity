@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 
 import com.github.joselion.lionspringsecurity.core.Account;
 import com.github.joselion.lionspringsecurity.core.AccountService;
-import com.github.joselion.lionspringsecurity.core.LionSecurityAfterErrorHandler;
+import com.github.joselion.lionspringsecurity.core.LionSecurityAfterFailureHandler;
 import com.github.joselion.lionspringsecurity.core.LionSecurityException;
 import com.github.joselion.lionspringsecurity.filters.AuthenticationFilter;
 import com.github.joselion.lionspringsecurity.properties.LionSecurityProperties;
@@ -36,7 +36,7 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
 	private LionSecurityProperties securityProperties;
 	
 	@Autowired(required=false)
-	private LionSecurityAfterErrorHandler errorHandler;
+	private LionSecurityAfterFailureHandler errorHandler;
 	
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws AuthenticationException, IOException, ServletException {
 		try {
@@ -95,7 +95,7 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
 			response.flushBuffer();
 			
 			if (errorHandler != null) {
-				errorHandler.apply();
+				errorHandler.accept(exception);
 			}
 		} catch (LionSecurityException | SQLException e) {
 			throw new ServletException("Security exception: " + e.getMessage(), e);

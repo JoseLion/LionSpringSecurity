@@ -1,0 +1,28 @@
+{
+	"properties": [
+		{
+			"name": "lion.security.access-control.allow-headers",
+			"defaultValue": "Accept, Authorization, Content-Encoding, Content-Type, Origin, X-CSRF-Token, X-Requested-With"			
+		},
+		{
+			"name": "lion.security.access-control.allow-methods",
+			"defaultValue": "delete, get, options, post, put"
+		},
+		{
+			"name": "lion.security.access-control.expose-headers",
+			"defaultValue": "Content-Encoding, Content-Type, X-CSRF-Token"
+		},
+		{
+			"name": "lion.security.lock-time",
+			"defaultValue": "1800000 ms (30 min)"
+		},
+		{
+			"name": "lion.security.login-method",
+			"defaultValue": "get"
+		},
+		{
+			"name": "lion.security.logout-method",
+			"defaultValue": "post"
+		}
+	]
+}
