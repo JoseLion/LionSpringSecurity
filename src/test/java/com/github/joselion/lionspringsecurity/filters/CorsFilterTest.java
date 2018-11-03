@@ -85,8 +85,8 @@ public class CorsFilterTest {
 		
 		assertThat(mockResponse).isNotNull();
 		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS)).isEqualTo("true");
-		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS)).isEqualTo("Accept, Authorization, Content-Encoding, Content-Type, Origin, X-Requested-With, " + LionSecurityConst.CSRF_HEADER_NAME);
-		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS)).isEqualTo("OPTIONS, GET, POST, PUT, DELETE");
+		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS)).isEqualTo("Accept, Authorization, Content-Encoding, Content-Type, Origin, " + LionSecurityConst.CSRF_HEADER_NAME + ", X-Requested-With");
+		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS)).isEqualTo("DELETE, GET, OPTIONS, POST, PUT");
 		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS)).isEqualTo("Content-Encoding, Content-Type, " + LionSecurityConst.CSRF_HEADER_NAME);
 		assertThat(mockResponse.getHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE)).isEqualTo("3600");
 	}

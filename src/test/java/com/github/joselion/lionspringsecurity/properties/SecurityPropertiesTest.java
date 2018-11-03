@@ -76,8 +76,8 @@ public class SecurityPropertiesTest {
 			LionSecurityConst.CSRF_HEADER_NAME
 		);
 		assertThat(properties.getAccessControl().getMaxAge()).isEqualTo(3600);
-		assertThat(properties.getAccessControl().allowHeadersToString()).isEqualTo("Accept, Authorization, Content-Encoding, Content-Type, Origin, X-Requested-With, " + LionSecurityConst.CSRF_HEADER_NAME);
-		assertThat(properties.getAccessControl().allowMethodsToString()).isEqualTo("OPTIONS, GET, POST, PUT, DELETE");
+		assertThat(properties.getAccessControl().allowHeadersToString()).isEqualTo("Accept, Authorization, Content-Encoding, Content-Type, Origin, " + LionSecurityConst.CSRF_HEADER_NAME + ", X-Requested-With");
+		assertThat(properties.getAccessControl().allowMethodsToString()).isEqualTo("DELETE, GET, OPTIONS, POST, PUT");
 		assertThat(properties.getAccessControl().exposeHeadersToString()).isEqualTo("Content-Encoding, Content-Type, " + LionSecurityConst.CSRF_HEADER_NAME);
 	}
 	

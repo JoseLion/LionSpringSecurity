@@ -45,7 +45,7 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 	        response.flushBuffer();
 	        
 	        if (successHandler != null) {
-	        	successHandler.apply();
+	        	successHandler.accept(authentication);
 	        }
 		} catch (LionSecurityException | SQLException e) {
 			throw new ServletException("Security Exception: " + e.getMessage(), e);

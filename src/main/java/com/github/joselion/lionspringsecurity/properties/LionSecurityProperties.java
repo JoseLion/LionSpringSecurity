@@ -16,107 +16,111 @@ import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 public class LionSecurityProperties {
 	
 	/**
-	 * Enables or disables spring security
-	 * 
-	 */
-	private Boolean enabled = true;
-	
-	/**
-	 * List of allowed origins which can access the end-points
-	 * 
-	 * Setting this property enables CORS feature to the security, removing it disabled CORS so all origins are allowed
-	 * 
-	 */
-	private List<String> allowedOrigins;
-	
-	/**
-	 * List of path matches that will ignore authorization
-	 * 
-	 */
-	private List<String> openPaths = Arrays.asList("/open/**");
-	
-	/**
-	 * The name of the cookie to store the CSRF token
-	 * 
-	 */
-	private String csrfCookie = "CSRF-TOKEN";
-	
-	/**
-	 * The value to be used on the bearer of the Authorization header
-	 * 
-	 */
-	private String bearer = "Bearer";
-	
-	/**
-	 * Enables or disables account locking feature
-	 * 
-	 */
-	private Boolean enableLock = true;
-	
-	/**
-	 * The time in milliseconds for which a user is locked (enableLock must be true)
-	 * 
-	 */
-	private Long lockTime = new Long(1800000);
-	
-	/**
-	 * The maximum number of attempts for the account to be locked
-	 * 
-	 */
-	private Integer maxAttempts = 5;
-	
-	/**
-	 * Default: get
-	 * 
-	 * The method for the login end-point
-	 * 
-	 */
-	private RequestMethod loginMethod = RequestMethod.GET;
-	
-	/**
-	 * The path for the login end-point
-	 * 
-	 */
-	private String loginPath = "/login";
-	
-	/**
-	 * Default: post
-	 * 
-	 * The method for the logout end-point
-	 * 
-	 */
-	private RequestMethod logoutMethod = RequestMethod.POST;
-	
-	/**
-	 * The path to the logout end-point
-	 * 
-	 */
-	private String logoutPath = "/logout";
-	
-	/**
-	 * The path to the session token end-point
-	 * 
-	 */
-	private String tokenPath = "/token";
-	
-	/**
 	 * Properties for all access control headers
 	 * 
 	 */
 	private AccessControlProperties accessControl = new AccessControlProperties();
 	
 	/**
-	 * Properties for the account entity
+	 * Properties for the account entity in the database
 	 * 
 	 */
 	private AccountEntityProperties accountEntity = new AccountEntityProperties();
+	
+	/**
+	 * List of allowed origins which can access the end-points.
+	 * Setting this property enables CORS feature to the security, removing it disabled CORS so all origins are allowed
+	 * 
+	 */
+	private List<String> allowedOrigins;
+	
+	/**
+	 * The value to be used for the bearer of the "Authorization" header
+	 * 
+	 */
+	private String bearer = "Bearer";
+	
+	/**
+	 * The name of the cookie where the CSRF token will be stored
+	 * 
+	 */
+	private String csrfCookie = "CSRF-TOKEN";
+	
+	/**
+	 * Enables or disables account locking for reaching the number of failed authentication attempts
+	 * 
+	 */
+	private Boolean enableLock = true;
+	
+	/**
+	 * Enables or disables spring security for all paths (with the "openPaths" exception)
+	 * 
+	 */
+	private Boolean enabled = true;
+	
+	/**
+	 * The time in milliseconds for which a user is locked if the account lock feature is enabled
+	 * 
+	 */
+	private Long lockTime = 1800000L;
+	
+	/**
+	 * The HTTP request method for the login end-point
+	 * 
+	 */
+	private RequestMethod loginMethod = RequestMethod.GET;
+	
+	/**
+	 * The routing path for the login end-point
+	 * 
+	 */
+	private String loginPath = "/login";
+	
+	/**
+	 * The HTTP request method for the logout end-point
+	 * 
+	 */
+	private RequestMethod logoutMethod = RequestMethod.POST;
+	
+	/**
+	 * The routing path for the logout end-point
+	 * 
+	 */
+	private String logoutPath = "/logout";
+	
+	/**
+	 * The maximum number of failed authentication attempts before the account gets locked if the account lock feature is enabled 
+	 * 
+	 */
+	private Integer maxAttempts = 5;
+	
+	/**
+	 * List of path matches that will ignore authentication and can be openly accessed
+	 * 
+	 */
+	private List<String> openPaths = Arrays.asList("/open/**");
+	
+	/**
+	 * The routing path the session token end-point.
+	 * This end-point can be used to retrieve the session token of an authenticated account
+	 * 
+	 */
+	private String tokenPath = "/token";
 
-	public Boolean getEnabled() {
-		return enabled;
+	public AccessControlProperties getAccessControl() {
+		return accessControl;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	public void setAccessControl(AccessControlProperties accessControl) {
+		this.accessControl = accessControl;
+	}
+
+	public AccountEntityProperties getAccountEntity() {
+		return accountEntity;
+	}
+
+	public void setAccountEntity(AccountEntityProperties accountEntity) {
+		this.accountEntity = accountEntity;
 	}
 
 	public List<String> getAllowedOrigins() {
@@ -127,12 +131,12 @@ public class LionSecurityProperties {
 		this.allowedOrigins = allowedOrigins;
 	}
 
-	public List<String> getOpenPaths() {
-		return openPaths;
+	public String getBearer() {
+		return bearer;
 	}
 
-	public void setOpenPaths(List<String> openPaths) {
-		this.openPaths = openPaths;
+	public void setBearer(String bearer) {
+		this.bearer = bearer;
 	}
 
 	public String getCsrfCookie() {
@@ -143,14 +147,6 @@ public class LionSecurityProperties {
 		this.csrfCookie = csrfCookie;
 	}
 
-	public String getBearer() {
-		return bearer;
-	}
-
-	public void setBearer(String bearer) {
-		this.bearer = bearer;
-	}
-
 	public Boolean getEnableLock() {
 		return enableLock;
 	}
@@ -159,20 +155,20 @@ public class LionSecurityProperties {
 		this.enableLock = enableLock;
 	}
 
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public Long getLockTime() {
 		return lockTime;
 	}
 
 	public void setLockTime(Long lockTime) {
 		this.lockTime = lockTime;
-	}
-
-	public Integer getMaxAttempts() {
-		return maxAttempts;
-	}
-
-	public void setMaxAttempts(Integer maxAttempts) {
-		this.maxAttempts = maxAttempts;
 	}
 
 	public RequestMethod getLoginMethod() {
@@ -207,28 +203,28 @@ public class LionSecurityProperties {
 		this.logoutPath = logoutPath;
 	}
 
+	public Integer getMaxAttempts() {
+		return maxAttempts;
+	}
+
+	public void setMaxAttempts(Integer maxAttempts) {
+		this.maxAttempts = maxAttempts;
+	}
+
+	public List<String> getOpenPaths() {
+		return openPaths;
+	}
+
+	public void setOpenPaths(List<String> openPaths) {
+		this.openPaths = openPaths;
+	}
+
 	public String getTokenPath() {
 		return tokenPath;
 	}
 
 	public void setTokenPath(String tokenPath) {
 		this.tokenPath = tokenPath;
-	}
-
-	public AccessControlProperties getAccessControl() {
-		return accessControl;
-	}
-
-	public void setAccessControl(AccessControlProperties accessControl) {
-		this.accessControl = accessControl;
-	}
-
-	public AccountEntityProperties getAccountEntity() {
-		return accountEntity;
-	}
-
-	public void setAccountEntity(AccountEntityProperties accountEntity) {
-		this.accountEntity = accountEntity;
 	}
 	
 }
