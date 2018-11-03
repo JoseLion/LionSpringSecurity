@@ -10,47 +10,46 @@ The library can be found on Maven Central https://mvnrepository.com/artifact/com
 <dependency>
     <groupId>com.github.joselion</groupId>
     <artifactId>lion-spring-security</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
 </dependency>
-
 ```
 
 ### Gradle
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-compile group: 'com.github.joselion', name: 'lion-spring-security', version: '1.0.1'
+compile group: 'com.github.joselion', name: 'lion-spring-security', version: '1.0.3'
 ```
 
 ### SBT
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-libraryDependencies += "com.github.joselion" % "lion-spring-security" % "1.0.1"
+libraryDependencies += "com.github.joselion" % "lion-spring-security" % "1.0.3"
 ```
 
 ### IVY
 ```
 <!-- https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security -->
-<dependency org="com.github.joselion" name="lion-spring-security" rev="1.0.1"/>
+<dependency org="com.github.joselion" name="lion-spring-security" rev="1.0.3"/>
 ```
 
 ### Grape
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
 @Grapes(
-    @Grab(group='com.github.joselion', module='lion-spring-security', version='1.0.1')
+    @Grab(group='com.github.joselion', module='lion-spring-security', version='1.0.3')
 )
 ```
 
 ### Leiningen
 ```
 ;; https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-[com.github.joselion/lion-spring-security "1.0.1"]
+[com.github.joselion/lion-spring-security "1.0.3"]
 ```
 
 ### Buildr
 ```
 # https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-'com.github.joselion:lion-spring-security:jar:1.0.1'
+'com.github.joselion:lion-spring-security:jar:1.0.3'
 ```
 
 ## Usage
