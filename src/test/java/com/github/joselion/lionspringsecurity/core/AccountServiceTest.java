@@ -75,7 +75,7 @@ public class AccountServiceTest {
 		helpers.insertBasicAccount("mock-user@test.com", "1234");
 		Account account = accountService.populate("mock-user@test.com");
 		Date mockDate = new Date(1538864181455L);
-		Long recordId = new Long(account.getId());
+		Long recordId = Long.valueOf(account.getId());
 		
 		account.setLastAttempt(mockDate);
 		account.setAttempts(3);
@@ -117,7 +117,7 @@ public class AccountServiceTest {
 		helpers.insertCompleteAccount("mock-user@test.com", "1234");
 		Account account = accountService.populate("mock-user@test.com");
 		Date mockDate = new Date(1538864181455L);
-		Long recordId = new Long(account.getId());
+		Long recordId = Long.valueOf(account.getId());
 		
 		account.setLastAttempt(mockDate);
 		account.setAttempts(3);
@@ -139,7 +139,7 @@ public class AccountServiceTest {
 		helpers.createCompleteAccountTable();
 		helpers.insertCompleteAccount("mock-user@test.com", "1234");
 		Account account = accountService.populate("mock-user@test.com");
-		Long recordId = new Long(account.getId());
+		Long recordId = Long.valueOf(account.getId());
 		
 		account.setLastAttempt(null);
 		account.setLockDate(null);
