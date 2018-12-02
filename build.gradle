@@ -19,7 +19,7 @@ apply plugin: 'signing'
 
 group = 'com.github.joselion'
 archivesBaseName = 'lion-spring-security'
-version = '1.0.3'
+version = '1.1.1'
 sourceCompatibility = 11
 
 jar {
@@ -95,12 +95,12 @@ repositories {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework:spring-jdbc:5.1.0.RELEASE')
-	compile('commons-io:commons-io:2.6')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework:spring-jdbc:5.1.0.RELEASE')
+	implementation('commons-io:commons-io:2.6')
 	compileOnly('org.springframework.boot:spring-boot-configuration-processor')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('org.springframework.security:spring-security-test')
-	testCompile('org.postgresql:postgresql')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('org.springframework.security:spring-security-test')
+	testImplementation('org.postgresql:postgresql')
 }
