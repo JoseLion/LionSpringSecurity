@@ -39,66 +39,68 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
 	private LionSecurityAfterFailureHandler errorHandler;
 	
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws AuthenticationException, IOException, ServletException {
-		try {
-			Date today = new Date();
-			Map<String, String> decoded = AuthenticationFilter.getAuthHeaderDecoded(request, securityProperties.getBearer());
-			Account account = accountService.populate(decoded.get("username"));
-			
-			response.setContentType(String.join("; ", MediaType.TEXT_HTML_VALUE, "charset=" + StandardCharsets.UTF_8));
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			
-			if (exception.getClass().isAssignableFrom(BadCredentialsException.class)) {
-				String message = "Invalid username/password";
+		if (securityProperties.getEnabled()) {
+			try {
+				Date today = new Date();
+				Map<String, String> decoded = AuthenticationFilter.getAuthHeaderDecoded(request, securityProperties.getBearer());
+				Account account = accountService.populate(decoded.get("username"));
 				
-				if (account != null && securityProperties.getEnableLock()) {
-					account.setLastAttempt(today);
-					account.setAttempts(account.getAttempts() + 1);
+				response.setContentType(String.join("; ", MediaType.TEXT_HTML_VALUE, "charset=" + StandardCharsets.UTF_8));
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				
+				if (exception.getClass().isAssignableFrom(BadCredentialsException.class)) {
+					String message = "Invalid username/password";
 					
-					if (account.getAttempts() >= securityProperties.getMaxAttempts()) {
-						account.setIsLocked(true);
-						account.setLockDate(today);
+					if (account != null && securityProperties.getEnableLock()) {
+						account.setLastAttempt(today);
+						account.setAttempts(account.getAttempts() + 1);
+						
+						if (account.getAttempts() >= securityProperties.getMaxAttempts()) {
+							account.setIsLocked(true);
+							account.setLockDate(today);
+						}
+						
+						account = accountService.update(account);
+						
+						message += ". You've used " + account.getAttempts() + " of " + securityProperties.getMaxAttempts() + " attempts";
+						
+						if (account.getIsLocked()) {
+							Long minutes = Math.round(securityProperties.getLockTime() / 1000.0 / 60.0);
+							String qualifier = minutes == 1 ? "minute" : "minutes";
+							message += ". Your account have been locked for " + minutes + " " + qualifier;
+						}
 					}
 					
-					account = accountService.update(account);
+					response.getWriter().print(message);
+				} else if (exception.getClass().isAssignableFrom(LockedException.class)) {
+					String message = "Your account is locked";
 					
-					message += ". You've used " + account.getAttempts() + " of " + securityProperties.getMaxAttempts() + " attempts";
-					
-					if (account.getIsLocked()) {
-						Long minutes = Math.round(securityProperties.getLockTime() / 1000.0 / 60.0);
+					if (account != null) {
+						Long millisLeft = securityProperties.getLockTime() - (today.getTime() - account.getLockDate().getTime());
+						Long minutes = Math.round(millisLeft / 1000.0 / 60.0);
 						String qualifier = minutes == 1 ? "minute" : "minutes";
-						message += ". Your account have been locked for " + minutes + " " + qualifier;
+						message += ". Please try again in " + minutes + " " + qualifier;
 					}
+					
+					response.getWriter().print(message);
+				} else if (exception.getClass().isAssignableFrom(DisabledException.class)) {
+					response.getWriter().print("Your account has been disabled");
+				} else if (exception.getClass().isAssignableFrom(AccountExpiredException.class)) {
+					response.getWriter().print("Your account has expired");
+				} else if (exception.getClass().isAssignableFrom(CredentialsExpiredException.class)) {
+					response.getWriter().print("Your account credentials have expired");
+				} else {
+					response.getWriter().print("Authentication failed with error: " + exception.getMessage());
 				}
 				
-				response.getWriter().print(message);
-			} else if (exception.getClass().isAssignableFrom(LockedException.class)) {
-				String message = "Your account is locked";
+				response.flushBuffer();
 				
-				if (account != null) {
-					Long millisLeft = securityProperties.getLockTime() - (today.getTime() - account.getLockDate().getTime());
-					Long minutes = Math.round(millisLeft / 1000.0 / 60.0);
-					String qualifier = minutes == 1 ? "minute" : "minutes";
-					message += ". Please try again in " + minutes + " " + qualifier;
+				if (errorHandler != null) {
+					errorHandler.accept(exception);
 				}
-				
-				response.getWriter().print(message);
-			} else if (exception.getClass().isAssignableFrom(DisabledException.class)) {
-				response.getWriter().print("Your account has been disabled");
-			} else if (exception.getClass().isAssignableFrom(AccountExpiredException.class)) {
-				response.getWriter().print("Your account has expired");
-			} else if (exception.getClass().isAssignableFrom(CredentialsExpiredException.class)) {
-				response.getWriter().print("Your account credentials have expired");
-			} else {
-				response.getWriter().print("Authentication failed with error: " + exception.getMessage());
+			} catch (LionSecurityException | SQLException | RuntimeException e) {
+				throw new ServletException("Security exception: " + e.getMessage(), e);
 			}
-			
-			response.flushBuffer();
-			
-			if (errorHandler != null) {
-				errorHandler.accept(exception);
-			}
-		} catch (LionSecurityException | SQLException e) {
-			throw new ServletException("Security exception: " + e.getMessage(), e);
 		}
 	}
 }

@@ -21,9 +21,9 @@ public class MockConfiguration {
 	public DataSource dataSource() throws SQLException {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql:lion_security_test");
+		dataSource.setUrl("jdbc:postgresql:lion_spring_security");
 		dataSource.setSchema("public");
-		dataSource.setUsername("lion");
+		dataSource.setUsername("joselion");
 		dataSource.setPassword("lion.90");
 		
 		return dataSource;

@@ -27,12 +27,12 @@ public class LoginController {
 	@Autowired
 	private LionSecurityProperties securityProperties;
 	
-	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".login-path}")
+	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".login-path:/login}")
 	public Principal user(Principal user) {
 		return user;
 	}
 	
-	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".token-path}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value="${" + LionSecurityConst.PROPS_PREFIX + ".token-path:/token}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String> token(HttpSession session) {
 		String token = "{\"token\": \"" + session.getId() + "\"}";
 		
