@@ -18,21 +18,14 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.github.joselion.lionspringsecurity.LoginController;
-import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 import com.github.joselion.lionspringsecurity.properties.PropertiesConfiguration;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes={PropertiesConfiguration.class})
 @WebMvcTest(controllers={ LoginController.class }, secure=false)
-@TestPropertySource(properties={
-	LionSecurityConst.PROPS_PREFIX + ".login-path=/login",
-	LionSecurityConst.PROPS_PREFIX + ".token-path=/token"
-})
 public class LoginControllerTest {
 	
 	@Autowired

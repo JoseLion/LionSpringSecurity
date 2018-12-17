@@ -10,50 +10,72 @@ The library can be found on Maven Central https://mvnrepository.com/artifact/com
 <dependency>
     <groupId>com.github.joselion</groupId>
     <artifactId>lion-spring-security</artifactId>
-    <version>1.0.3</version>
+    <version>1.2.3</version>
 </dependency>
 ```
 
 ### Gradle
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-compile group: 'com.github.joselion', name: 'lion-spring-security', version: '1.0.3'
+compile group: 'com.github.joselion', name: 'lion-spring-security', version: '1.2.3'
 ```
 
 ### SBT
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-libraryDependencies += "com.github.joselion" % "lion-spring-security" % "1.0.3"
+libraryDependencies += "com.github.joselion" % "lion-spring-security" % "1.2.3"
 ```
 
 ### IVY
 ```
 <!-- https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security -->
-<dependency org="com.github.joselion" name="lion-spring-security" rev="1.0.3"/>
+<dependency org="com.github.joselion" name="lion-spring-security" rev="1.2.3"/>
 ```
 
 ### Grape
 ```
 // https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
 @Grapes(
-    @Grab(group='com.github.joselion', module='lion-spring-security', version='1.0.3')
+    @Grab(group='com.github.joselion', module='lion-spring-security', version='1.2.3')
 )
 ```
 
 ### Leiningen
 ```
 ;; https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-[com.github.joselion/lion-spring-security "1.0.3"]
+[com.github.joselion/lion-spring-security "1.2.3"]
 ```
 
 ### Buildr
 ```
 # https://mvnrepository.com/artifact/com.github.joselion/lion-spring-security
-'com.github.joselion:lion-spring-security:jar:1.0.3'
+'com.github.joselion:lion-spring-security:jar:1.2.3'
 ```
 
 ## Usage
-Simply add the dependency to your project and configure as desired with the properties listed bellow. The properties values shown bellow are the default values, so not all the properties need to be added in order to have full features available. The example is over an `application.yml`, but feel free to use `application.properties` if you prefer to.
+As the Spring Application needs to know where to find the configurations, is very important to add `com.github.joselion.lionspringsecurity` to the base scaned packages ib the `@SpringBootApplication` annotation of the main class of the application:
+```java
+package com.github.my.awesome.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(
+  scanBasePackages={
+    "com.github.my.awesome.app",
+    "com.github.joselion.lionspringsecurity"
+  }
+)
+public class MyAwesomeAppApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(MyAwesomeAppApplication.class, args);
+  }
+
+}
+```
+
+Then, simply add the dependency to your project and configure as desired with the properties listed bellow. The properties values shown bellow are the default values, so not all the properties need to be added in order to have full features available. The example is over an `application.yml`, but feel free to use `application.properties` if you prefer to.
 
 ### Properties (defaults)
 ```yml
@@ -165,6 +187,25 @@ public LionSecurityAfterFailureHandler afterFailureHandler() {
 	return (AuthenticationException authenticationException) -> {
 		// Your failure handler code here
 	};
+}
+```
+
+### Custom exception handling
+Authentication exception handling can be customized by adding bean configurations for the intefaces `AuthenticationEntryPoint` and `AccessDeniedHandler`. Just create you own implementation and add a bean to your configuration:
+
+```java
+@Configuration
+public class MyAwesomeAppConfiguration {
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint() {
+    return new myCustomAuthenticationEntryPoint();
+  }
+
+  @Bean
+  public AccessDeniedHandler accessDeniedHandler() {
+    return new myCustomAccessDeniedHandler();
+  }
 }
 ```
 

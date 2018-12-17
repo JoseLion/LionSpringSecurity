@@ -1,10 +1,14 @@
 package com.github.joselion.lionspringsecurity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -14,6 +18,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -21,8 +26,11 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -32,6 +40,7 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.github.joselion.lionspringsecurity.core.LionSecurityConst;
 import com.github.joselion.lionspringsecurity.filters.AuthenticationFilter;
@@ -39,7 +48,7 @@ import com.github.joselion.lionspringsecurity.filters.CsrfCookieFilter;
 import com.github.joselion.lionspringsecurity.properties.LionSecurityProperties;
 
 @Configuration
-@Order(SecurityProperties.BASIC_AUTH_ORDER)
+@Order(SecurityProperties.DEFAULT_FILTER_ORDER)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -53,6 +62,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private AuthenticationSuccessHandler securityAuthenticationSuccessHandler;
+	
+	@Autowired(required=false)
+	private HandlerExceptionResolver exceptionResolver;
+	
+	@Autowired(required=false)
+	private AuthenticationEntryPoint customAuthenticationEntryPoint;
+	
+	@Autowired(required=false)
+	private AccessDeniedHandler customAccessDeniedHandler;
 	
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -72,6 +90,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.anyRequest()
 					.authenticated()
 				.and()
+					.exceptionHandling()
+						.authenticationEntryPoint(this.getAuthenticationEntryPoint())
+						.accessDeniedHandler(this.getAccessDeniedHandler())
+				.and()
 					.csrf()
 						.ignoringAntMatchers(ignorePaths)
 						.csrfTokenRepository(csrfTokenRepository())
@@ -83,7 +105,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 					.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
 		} else {
-	    	http.csrf().disable();
+	    	http.authorizeRequests()
+	    		.antMatchers("/").permitAll()
+	    	.and()
+	    		.csrf().disable();
 		}
     }
  
@@ -166,5 +191,41 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
 		repository.setHeaderName(LionSecurityConst.CSRF_HEADER_NAME);
 		return repository;
+	}
+	
+	private AuthenticationEntryPoint getAuthenticationEntryPoint() {
+		if (customAuthenticationEntryPoint == null) {
+			return new AuthenticationEntryPoint() {
+				
+				@Override
+				public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+					if (exceptionResolver == null) {
+						response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage());
+					} else {
+						exceptionResolver.resolveException(request, response, null, authException);						
+					}
+				}
+			};
+		}
+		
+		return customAuthenticationEntryPoint;
+	}
+	
+	private AccessDeniedHandler getAccessDeniedHandler() {
+		if (customAccessDeniedHandler == null) {
+			return new AccessDeniedHandler() {
+				
+				@Override
+				public void handle(
+					HttpServletRequest request,
+					HttpServletResponse response,
+					AccessDeniedException accessDeniedException
+				) throws IOException, ServletException {
+					throw new AccessDeniedException(accessDeniedException.getMessage(), accessDeniedException);
+				}
+			};
+		}
+		
+		return customAccessDeniedHandler;
 	}
 }

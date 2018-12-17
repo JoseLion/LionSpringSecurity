@@ -18,8 +18,12 @@ import com.github.joselion.lionspringsecurity.core.Account;
 import com.github.joselion.lionspringsecurity.core.AccountService;
 import com.github.joselion.lionspringsecurity.core.LionSecurityAfterSuccessHandler;
 import com.github.joselion.lionspringsecurity.core.LionSecurityException;
+import com.github.joselion.lionspringsecurity.properties.LionSecurityProperties;
 
 public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+	
+	@Autowired
+	private LionSecurityProperties securityProperties;
 	
 	@Autowired
 	private AccountService accountService;
@@ -29,26 +33,28 @@ public class AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccess
 	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		try {
-			Account account = (Account)authentication.getDetails();
-			
-			if (account.getAttempts() != 0) {
-				account.setAttempts(0);
-				account.setLastAttempt(null);
-				accountService.update(account);
+		if (securityProperties.getEnabled()) {
+			try {
+				Account account = (Account)authentication.getDetails();
+				
+				if (account.getAttempts() != 0) {
+					account.setAttempts(0);
+					account.setLastAttempt(null);
+					accountService.update(account);
+				}
+				
+				CsrfToken token = (CsrfToken)request.getAttribute(CsrfToken.class.getName());
+				response.setContentType(String.join("; ", MediaType.TEXT_HTML_VALUE, "charset=" + StandardCharsets.UTF_8));
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.getWriter().print(token.getToken());
+				response.flushBuffer();
+				
+				if (successHandler != null) {
+					successHandler.accept(authentication);
+				}
+			} catch (LionSecurityException | SQLException | RuntimeException e) {
+				throw new ServletException("Security Exception: " + e.getMessage(), e);
 			}
-			
-			CsrfToken token = (CsrfToken)request.getAttribute(CsrfToken.class.getName());
-			response.setContentType(String.join("; ", MediaType.TEXT_HTML_VALUE, "charset=" + StandardCharsets.UTF_8));
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.getWriter().print(token.getToken());
-	        response.flushBuffer();
-	        
-	        if (successHandler != null) {
-	        	successHandler.accept(authentication);
-	        }
-		} catch (LionSecurityException | SQLException e) {
-			throw new ServletException("Security Exception: " + e.getMessage(), e);
 		}
 	}
 }
